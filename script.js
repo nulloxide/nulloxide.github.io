@@ -30,11 +30,16 @@ function registerInterval(id) {
 }
 
 /**
- * Register a timeout for cleanup
- * @param {number} id - The timeout ID
- * @returns {number} The same timeout ID
+ * Register a timeout for cleanup with auto-removal after execution
+ * @param {Function} callback - The callback function
+ * @param {number} delay - Delay in milliseconds
+ * @returns {number} The timeout ID
  */
-function registerTimeout(id) {
+function registerTimeout(callback, delay) {
+    const id = setTimeout(() => {
+        cleanupRegistry.timeouts.delete(id);
+        callback();
+    }, delay);
     cleanupRegistry.timeouts.add(id);
     return id;
 }
@@ -68,6 +73,22 @@ window.addEventListener('beforeunload', cleanupAll);
 
 /** @type {Lenis|null} */
 let lenis = null;
+
+/**
+ * Cached CSS values that change with theme
+ * Updated by initThemeToggle on theme change
+ */
+const themeCache = {
+    canvasFade: 'rgba(8, 8, 10, 0.12)'
+};
+
+/**
+ * Update cached theme values from CSS custom properties
+ */
+function updateThemeCache() {
+    const style = getComputedStyle(document.documentElement);
+    themeCache.canvasFade = style.getPropertyValue('--canvas-fade').trim() || 'rgba(8, 8, 10, 0.12)';
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     try {
@@ -116,6 +137,9 @@ function initThemeToggle() {
 
     const controller = createAbortController();
 
+    // Initialize theme cache on load
+    updateThemeCache();
+
     /**
      * Get the current effective theme
      * @returns {'light' | 'dark'} The current theme
@@ -135,6 +159,8 @@ function initThemeToggle() {
     function setTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
+        // Update cached CSS values after theme change
+        requestAnimationFrame(updateThemeCache);
     }
 
     // Toggle on click
@@ -151,6 +177,7 @@ function initThemeToggle() {
         const stored = localStorage.getItem('theme');
         if (!stored) {
             document.documentElement.removeAttribute('data-theme');
+            requestAnimationFrame(updateThemeCache);
         }
     }, { signal: controller.signal });
 }
@@ -186,7 +213,7 @@ function initKineticTypography() {
 
         // Initial scramble animation
         const scrambleDelay = wordIndex * 400;
-        registerTimeout(setTimeout(() => {
+        registerTimeout(() => {
             letters.forEach((letter, i) => {
                 letter.classList.add('scrambling');
                 let iterations = 0;
@@ -204,23 +231,32 @@ function initKineticTypography() {
                 }, 40 + i * 10);
                 registerInterval(interval);
             });
-        }, 300 + scrambleDelay));
+        }, 300 + scrambleDelay);
 
         // Letter hover effects
         letters.forEach(letter => {
             letter.addEventListener('mouseenter', () => {
                 letter.classList.add('active');
-                registerTimeout(setTimeout(() => {
+                registerTimeout(() => {
                     letter.classList.remove('active');
-                }, 400));
+                }, 400);
             }, { signal: controller.signal });
         });
 
-        // Word 3D tilt effect
+        // Word 3D tilt effect - cache rect and update on resize
+        let wordRect = word.getBoundingClientRect();
+
+        window.addEventListener('resize', () => {
+            wordRect = word.getBoundingClientRect();
+        }, { signal: controller.signal });
+
+        word.addEventListener('mouseenter', () => {
+            wordRect = word.getBoundingClientRect();
+        }, { signal: controller.signal });
+
         word.addEventListener('mousemove', (e) => {
-            const rect = word.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            const x = (e.clientX - wordRect.left) / wordRect.width - 0.5;
+            const y = (e.clientY - wordRect.top) / wordRect.height - 0.5;
             word.style.transform = `perspective(500px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`;
         }, { signal: controller.signal });
 
@@ -232,24 +268,24 @@ function initKineticTypography() {
         // Gradient flow effect
         function triggerGradientFlow() {
             letters.forEach((letter, i) => {
-                registerTimeout(setTimeout(() => {
+                registerTimeout(() => {
                     letter.classList.add('gradient-flow');
-                    registerTimeout(setTimeout(() => letter.classList.remove('gradient-flow'), 600));
-                }, i * 80));
+                    registerTimeout(() => letter.classList.remove('gradient-flow'), 600);
+                }, i * 80);
             });
         }
 
-        registerTimeout(setTimeout(() => {
+        registerTimeout(() => {
             triggerGradientFlow();
             registerInterval(setInterval(triggerGradientFlow, 5000 + wordIndex * 1000));
-        }, 2000 + wordIndex * 500));
+        }, 2000 + wordIndex * 500);
 
         // Random glitch effect
         function triggerRandomGlitch() {
             const randomLetter = letters[Math.floor(Math.random() * letters.length)];
             if (randomLetter) {
                 randomLetter.classList.add('glitch');
-                registerTimeout(setTimeout(() => randomLetter.classList.remove('glitch'), 150));
+                registerTimeout(() => randomLetter.classList.remove('glitch'), 150);
             }
         }
 
@@ -275,10 +311,16 @@ function initButtonSpotlight() {
     const controller = createAbortController();
 
     buttons.forEach(btn => {
+        // Cache rect and update on mouseenter for accuracy
+        let btnRect = btn.getBoundingClientRect();
+
+        btn.addEventListener('mouseenter', () => {
+            btnRect = btn.getBoundingClientRect();
+        }, { signal: controller.signal });
+
         btn.addEventListener('mousemove', (e) => {
-            const rect = btn.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            const x = ((e.clientX - btnRect.left) / btnRect.width) * 100;
+            const y = ((e.clientY - btnRect.top) / btnRect.height) * 100;
             btn.style.setProperty('--mouse-x', `${x}%`);
             btn.style.setProperty('--mouse-y', `${y}%`);
         }, { signal: controller.signal });
@@ -441,9 +483,9 @@ function initTerminalJourney() {
 
             const lines = terminal.querySelectorAll('.terminal-line');
             lines.forEach((line, i) => {
-                registerTimeout(setTimeout(() => {
+                registerTimeout(() => {
                     line.classList.add('typed');
-                }, i * 120));
+                }, i * 120);
             });
         },
         once: true
@@ -506,6 +548,7 @@ function initWaveVisualization() {
 
     let time = 0;
     let isVisible = false;
+    let animationStarted = false;
 
     function draw() {
         const w = canvas.width / window.devicePixelRatio;
@@ -519,11 +562,6 @@ function initWaveVisualization() {
         } else {
             mouse.x = null;
             mouse.y = null;
-        }
-
-        if (!isVisible) {
-            animationId = requestAnimationFrame(draw);
-            return;
         }
 
         for (let layer = 0; layer < 3; layer++) {
@@ -565,13 +603,16 @@ function initWaveVisualization() {
         animationId = requestAnimationFrame(draw);
     }
 
-    draw();
-
+    // Don't start animation until section is visible
     ScrollTrigger.create({
         trigger: '.section--philosophy',
         start: 'top 80%',
         onEnter: () => {
             isVisible = true;
+            if (!animationStarted) {
+                animationStarted = true;
+                draw();
+            }
         },
         once: true
     });
@@ -647,6 +688,9 @@ function initVoidCanvas() {
             this.colorIndex = 0;
             this.pulseOffset = 0;
             this.pulseSpeed = 0;
+            // Pre-computed color strings to avoid string creation in draw loop
+            this.fillColor = '';
+            this.glowColor = '';
             this.reset();
         }
 
@@ -693,22 +737,24 @@ function initVoidCanvas() {
             if (this.x > width) this.x = 0;
             if (this.y < 0) this.y = height;
             if (this.y > height) this.y = 0;
+
+            // Pre-compute color strings once per update instead of twice per draw
+            const color = colors[this.colorIndex];
+            const shifted = shiftColor(color, time * 0.001 + this.x * 0.001);
+            this.fillColor = `rgba(${shifted.r},${shifted.g},${shifted.b},${this.alpha})`;
+            this.glowColor = `rgba(${shifted.r},${shifted.g},${shifted.b},${this.alpha * 0.3})`;
         }
 
         draw() {
-            const color = colors[this.colorIndex];
-            const shiftedColor = shiftColor(color, time * 0.001 + this.x * 0.001);
-
-            // Optimized: Use simple arc with solid color instead of gradient per particle
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${shiftedColor.r}, ${shiftedColor.g}, ${shiftedColor.b}, ${this.alpha})`;
+            ctx.fillStyle = this.fillColor;
             ctx.fill();
 
             // Add glow effect with larger, more transparent circle
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${shiftedColor.r}, ${shiftedColor.g}, ${shiftedColor.b}, ${this.alpha * 0.3})`;
+            ctx.fillStyle = this.glowColor;
             ctx.fill();
         }
     }
@@ -757,17 +803,9 @@ function initVoidCanvas() {
         }
     }
 
-    /**
-     * Get the current canvas fade color based on theme
-     * @returns {string} RGBA color string
-     */
-    function getCanvasFadeColor() {
-        const style = getComputedStyle(document.documentElement);
-        return style.getPropertyValue('--canvas-fade').trim() || 'rgba(8, 8, 10, 0.12)';
-    }
-
     function animate() {
-        ctx.fillStyle = getCanvasFadeColor();
+        // Use cached theme value instead of getComputedStyle every frame
+        ctx.fillStyle = themeCache.canvasFade;
         ctx.fillRect(0, 0, width, height);
 
         time++;
@@ -840,9 +878,9 @@ function initScrollAnimations() {
             // Depth text - word-by-word reveal
             const words = document.querySelectorAll('.reveal-word');
             words.forEach((word, i) => {
-                registerTimeout(setTimeout(() => {
+                registerTimeout(() => {
                     word.classList.add('visible');
-                }, 600 + i * 150));
+                }, 600 + i * 150);
             });
 
             // Balance text
@@ -913,9 +951,9 @@ function initScrollAnimations() {
                 text = text.replace('{accent}', '<span class="accent">');
                 text = text.replace('{/accent}', '</span>');
 
-                registerTimeout(setTimeout(() => {
+                registerTimeout(() => {
                     typeCommentLine(line, text);
-                }, delay));
+                }, delay);
 
                 delay += text.length * 30 + 500;
             });
@@ -985,10 +1023,16 @@ function initMagnetic() {
 
     elements.forEach(el => {
         if (!isTouchDevice) {
+            // Cache rect and update on mouseenter
+            let elRect = el.getBoundingClientRect();
+
+            el.addEventListener('mouseenter', () => {
+                elRect = el.getBoundingClientRect();
+            }, { signal: controller.signal });
+
             el.addEventListener('mousemove', (e) => {
-                const rect = el.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
+                const x = e.clientX - elRect.left - elRect.width / 2;
+                const y = e.clientY - elRect.top - elRect.height / 2;
                 gsap.to(el, { x: x * 0.3, y: y * 0.3, duration: 0.3, ease: 'power2.out' });
             }, { signal: controller.signal });
 
@@ -1037,15 +1081,15 @@ function initMatrixLocation() {
         onEnter: () => {
             gsap.to('.location-prompt', { opacity: 1, duration: 0.5 });
 
-            registerTimeout(setTimeout(() => {
+            registerTimeout(() => {
                 const pair = pairs[Math.floor(Math.random() * pairs.length)];
                 typeText(locationResponse, pair.response, 50, () => {
-                    registerTimeout(setTimeout(() => {
+                    registerTimeout(() => {
                         locationCoords.textContent = pair.subtitle;
                         gsap.to(locationCoords, { opacity: 1, duration: 0.5 });
-                    }, 500));
+                    }, 500);
                 });
-            }, 800));
+            }, 800);
         },
         once: true
     });
@@ -1072,7 +1116,7 @@ function typeText(element, text, speed, callback) {
             element.textContent = text.substring(0, i + 1);
             element.appendChild(cursor);
             i++;
-            registerTimeout(setTimeout(type, speed));
+            registerTimeout(type, speed);
         } else {
             element.textContent = text;
             if (callback) callback();
@@ -1125,7 +1169,7 @@ function typeCommentLine(element, html) {
 
             element.innerHTML = currentHtml + '<span class="cursor-blink">_</span>';
             i++;
-            registerTimeout(setTimeout(type, 25 + Math.random() * 15));
+            registerTimeout(type, 25 + Math.random() * 15);
         } else {
             element.innerHTML = html;
         }
@@ -1188,7 +1232,7 @@ function initNicknameInput() {
         response.classList.add('visible');
 
         // Transform button to personal email link
-        registerTimeout(setTimeout(() => {
+        registerTimeout(() => {
             btn.classList.add('revealed');
             const personalEmail = ['nulloxide', '@', 'gmail', '.', 'com'].join('');
             const encodedName = encodeURIComponent(input.value);
@@ -1201,7 +1245,7 @@ function initNicknameInput() {
 
             btn.textContent = '';
             btn.appendChild(link);
-        }, 1000));
+        }, 1000);
     }
 
     btn.addEventListener('click', (e) => {
@@ -1224,19 +1268,29 @@ function initNicknameInput() {
 
 /**
  * Initialize the scroll progress bar at the top of the page
+ * Uses rAF throttling for better performance
  */
 function initScrollProgress() {
     const progressBar = document.getElementById('scroll-progress');
     if (!progressBar) return;
 
     const controller = createAbortController();
+    let ticking = false;
 
-    window.addEventListener('scroll', () => {
+    function updateProgress() {
         const scrollTop = window.scrollY;
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
         const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
         progressBar.style.width = `${progress}%`;
-    }, { signal: controller.signal });
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(updateProgress);
+            ticking = true;
+        }
+    }, { passive: true, signal: controller.signal });
 }
 
 // ================================
@@ -1370,7 +1424,7 @@ function initEmailReveal() {
             if (i < email.length) {
                 display.textContent += email[i];
                 i++;
-                registerTimeout(setTimeout(typeEmail, 50));
+                registerTimeout(typeEmail, 50);
             } else {
                 // Make it clickable
                 const link = document.createElement('a');
@@ -1390,9 +1444,9 @@ function initEmailReveal() {
         if (buttonText) buttonText.textContent = 'Copied vibes';
         if (emailHint) emailHint.style.display = 'none';
 
-        registerTimeout(setTimeout(() => {
+        registerTimeout(() => {
             if (buttonText) buttonText.textContent = 'Email';
-        }, 2000));
+        }, 2000);
     }, { signal: controller.signal });
 }
 
@@ -1423,7 +1477,7 @@ function initEndSection() {
         registerInterval(setInterval(() => {
             if (Math.random() < 0.1) {
                 sigEl.classList.add('glitching');
-                registerTimeout(setTimeout(() => sigEl.classList.remove('glitching'), 200));
+                registerTimeout(() => sigEl.classList.remove('glitching'), 200);
             }
         }, 5000));
     }
