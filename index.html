@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nulloxide</title>
+    <meta name="description" content="nulloxide - the void where everything begins + the patina from decades of exposure">
+    <meta name="author" content="nulloxide">
+    <meta name="theme-color" content="#08080a">
+
+    <!-- OpenGraph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="nulloxide">
+    <meta property="og:description" content="The void where everything begins + the patina from decades of exposure">
+    <meta property="og:image" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%2308080a'/><text x='50' y='72' font-family='system-ui' font-size='70' font-weight='600' fill='%2300ff9d' text-anchor='middle'>∅</text></svg>">
+    <meta name="twitter:card" content="summary">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="favicon.svg">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+    <!-- The Void - Generative Background -->
+    <canvas id="void" aria-hidden="true"></canvas>
+
+    <!-- Noise -->
+    <div class="noise" aria-hidden="true"></div>
+
+    <!-- Main -->
+    <main id="content">
+
+        <!-- Intro: nulloxide meaning -->
+        <section class="section section--hero">
+            <div class="hero-block">
+                <div class="null-meaning">
+                    <span class="symbol">∅</span>
+                    <span class="word">null</span>
+                    <span class="definition">the void where everything begins</span>
+                </div>
+                <div class="plus">+</div>
+                <div class="oxide-meaning">
+                    <span class="word">oxide</span>
+                    <span class="definition">the patina from decades of exposure</span>
+                </div>
+            </div>
+            <p class="hero-sub">
+                <span class="age-line"><span id="years"></span> years in the machine.</span>
+                <span class="dim" id="age-joke"></span>
+            </p>
+        </section>
+
+        <!-- Visual Journey - Terminal/Code Evolution -->
+        <section class="section section--journey">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <span class="terminal-dot"></span>
+                    <span class="terminal-dot"></span>
+                    <span class="terminal-dot"></span>
+                    <span class="terminal-title">~/journey.sh</span>
+                </div>
+                <div class="terminal-body" id="terminal">
+                    <div class="terminal-line" data-delay="0">
+                        <span class="prompt">></span>
+                        <span class="cmd">LOAD "CURIOSITY",8,1</span>
+                    </div>
+                    <!-- More lines added by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Philosophy: Depth + Balance combined -->
+        <section class="section section--philosophy">
+            <div class="philosophy-grid">
+                <div class="depth-visual">
+                    <div class="layer layer-1"></div>
+                    <div class="layer layer-2"></div>
+                    <div class="layer layer-3"></div>
+                    <div class="layer layer-4"></div>
+                    <div class="depth-text">
+                        <p><span class="reveal-word">Some</span> <span class="reveal-word">go</span> <span class="reveal-word">wide.</span></p>
+                        <p><span class="reveal-word">I</span> <span class="reveal-word">go</span> <span class="reveal-word accent">deep.</span></p>
+                    </div>
+                </div>
+                <div class="balance-visual">
+                    <div class="wave-container">
+                        <canvas id="wave"></canvas>
+                    </div>
+                    <p class="balance-text">
+                        Logic alone is incomplete.<br>
+                        <span class="dim">There's rhythm in the chaos.</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Meta - code comment interlude -->
+        <section class="section section--meta">
+            <div class="meta-comment">
+                <span class="comment-line" data-text="// A website. In {year}. When AI answers everything."></span>
+                <span class="comment-line" data-text="// But here you are. {accent}Respect.{/accent}"></span>
+            </div>
+        </section>
+
+        <!-- Location -->
+        <section class="section section--location" aria-label="Location">
+            <div class="location-content">
+                <p class="location-prompt">
+                    <span class="dim">$ whereis nulloxide</span>
+                </p>
+                <p class="location-response" aria-live="polite">
+                    <span class="cursor-blink">_</span>
+                </p>
+                <p class="location-coords dim" id="location-coords"></p>
+            </div>
+        </section>
+
+        <!-- Work -->
+        <section class="section section--work">
+            <div class="work-content">
+                <p class="work-intro dim">If you have interesting problems and budget:</p>
+                <div class="work-links">
+                    <a href="https://linkedin.com/in/nulloxide" target="_blank" rel="noopener noreferrer" class="link-work" data-magnetic aria-label="Visit LinkedIn profile">
+                        <span class="link-icon">in</span>
+                        <span>LinkedIn</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                        </svg>
+                    </a>
+                    <button class="link-work link-email" data-magnetic aria-label="Reveal email address" id="reveal-email">
+                        <span class="link-icon">@</span>
+                        <span>Email</span>
+                        <span class="email-hint">(click to reveal)</span>
+                    </button>
+                </div>
+                <p class="email-display dim" id="email-display"></p>
+            </div>
+        </section>
+
+        <!-- Find Me -->
+        <section class="section section--find">
+            <div class="find-content">
+                <p class="find-intro">Lost touch? Looking for me?</p>
+                <p class="find-handle">
+                    <span class="dim">I'm</span>
+                    <span class="handle">nulloxide</span>
+                    <span class="dim">almost everywhere.</span>
+                </p>
+                <p class="find-note dim">
+                    (Mostly lurking. Rarely posting. But findable.)
+                </p>
+
+                <div class="reconnect-box">
+                    <p class="reconnect-header">No project? No money?</p>
+                    <p class="reconnect-sub dim">Enter the nickname you knew me by.</p>
+                    <p class="reconnect-sub dim">So I know which era you're from.</p>
+                    <div class="nickname-input-wrapper">
+                        <span class="input-prompt" aria-hidden="true">></span>
+                        <input type="text" id="nickname-input" class="nickname-input" placeholder="mohsen? moe? that kid?" autocomplete="off" spellcheck="false" aria-label="Enter the nickname you knew me by">
+                    </div>
+                    <div class="nickname-response" id="nickname-response" aria-live="polite"></div>
+                    <button id="sesame-btn" class="sesame-btn" data-magnetic aria-label="Submit nickname to reveal contact">
+                        <span>Open sesame</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- End -->
+        <section class="section section--end">
+            <div class="end-content">
+                <div class="end-sig" id="end-sig">
+                    <span class="sig-symbol">∅→</span>
+                    <span class="sig-name" data-text="nulloxide">nulloxide</span>
+                </div>
+                <div class="end-message">
+                    <p class="end-line dim">// Still building. Still curious.</p>
+                    <p class="end-line dim">// <span id="end-timestamp"></span></p>
+                </div>
+                <button class="scroll-top" id="scroll-top" aria-label="Scroll back to top">
+                    <span class="scroll-top-text">↑ reboot</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" integrity="sha384-tKsJDT6PlUI0pSBt9/sBKJluKgA19/a6mBrDsZaXotLB4ZYfMGM6xt6/WgGpYhTm" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+</body>
+</html>
