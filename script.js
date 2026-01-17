@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    initThemeToggle();
     initLenis();
     initKineticTypography();
     calculateAge();
@@ -100,6 +101,59 @@ document.addEventListener('DOMContentLoaded', () => {
     initEmailReveal();
     initEndSection();
 });
+
+// ================================
+// Theme Toggle
+// ================================
+
+/**
+ * Initialize theme toggle functionality
+ * Handles light/dark mode switching with localStorage persistence
+ */
+function initThemeToggle() {
+    const toggle = document.getElementById('theme-toggle');
+    if (!toggle) return;
+
+    const controller = createAbortController();
+
+    /**
+     * Get the current effective theme
+     * @returns {'light' | 'dark'} The current theme
+     */
+    function getCurrentTheme() {
+        const stored = localStorage.getItem('theme');
+        if (stored) return stored;
+
+        // Check system preference
+        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+
+    /**
+     * Set the theme and persist to localStorage
+     * @param {'light' | 'dark'} theme - The theme to set
+     */
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }
+
+    // Toggle on click
+    toggle.addEventListener('click', () => {
+        const current = getCurrentTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
+        setTheme(next);
+    }, { signal: controller.signal });
+
+    // Listen for system preference changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+    mediaQuery.addEventListener('change', (e) => {
+        // Only update if user hasn't set a manual preference
+        const stored = localStorage.getItem('theme');
+        if (!stored) {
+            document.documentElement.removeAttribute('data-theme');
+        }
+    }, { signal: controller.signal });
+}
 
 // ================================
 // Kinetic Typography - Combined Effects
@@ -703,8 +757,17 @@ function initVoidCanvas() {
         }
     }
 
+    /**
+     * Get the current canvas fade color based on theme
+     * @returns {string} RGBA color string
+     */
+    function getCanvasFadeColor() {
+        const style = getComputedStyle(document.documentElement);
+        return style.getPropertyValue('--canvas-fade').trim() || 'rgba(8, 8, 10, 0.12)';
+    }
+
     function animate() {
-        ctx.fillStyle = 'rgba(8, 8, 10, 0.12)';
+        ctx.fillStyle = getCanvasFadeColor();
         ctx.fillRect(0, 0, width, height);
 
         time++;

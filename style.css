@@ -9,6 +9,7 @@
 }
 
 :root {
+    /* Dark theme (default) */
     --void: #08080a;
     --surface: #0f0f12;
     --text: #e4e4e8;
@@ -16,11 +17,56 @@
     --accent: #00ff9d;
     --accent-dim: rgba(0, 255, 157, 0.15);
     --rust: #ff6b35;
+    --glow-opacity: 1;
+    --noise-opacity: 0.04;
+    --terminal-bg: rgba(0, 255, 157, 0.02);
+    --terminal-border: rgba(0, 255, 157, 0.1);
+    --input-bg: var(--void);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --canvas-fade: rgba(8, 8, 10, 0.12);
 
     --font-mono: 'JetBrains Mono', monospace;
     --font-sans: 'Inter', sans-serif;
 
     --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Light theme */
+[data-theme="light"] {
+    --void: #f5f5f7;
+    --surface: #ffffff;
+    --text: #1a1a1c;
+    --dim: #6b6b78;
+    --accent: #00a86b;
+    --accent-dim: rgba(0, 168, 107, 0.12);
+    --rust: #d94f1a;
+    --glow-opacity: 0.5;
+    --noise-opacity: 0.02;
+    --terminal-bg: rgba(0, 0, 0, 0.03);
+    --terminal-border: rgba(0, 0, 0, 0.1);
+    --input-bg: #ffffff;
+    --input-border: rgba(0, 0, 0, 0.12);
+    --canvas-fade: rgba(245, 245, 247, 0.15);
+}
+
+/* System preference - light mode (when no manual override) */
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+        --void: #f5f5f7;
+        --surface: #ffffff;
+        --text: #1a1a1c;
+        --dim: #6b6b78;
+        --accent: #00a86b;
+        --accent-dim: rgba(0, 168, 107, 0.12);
+        --rust: #d94f1a;
+        --glow-opacity: 0.5;
+        --noise-opacity: 0.02;
+        --terminal-bg: rgba(0, 0, 0, 0.03);
+        --terminal-border: rgba(0, 0, 0, 0.1);
+        --input-bg: #ffffff;
+        --input-border: rgba(0, 0, 0, 0.12);
+        --canvas-fade: rgba(245, 245, 247, 0.15);
+    }
 }
 
 ::selection {
@@ -106,7 +152,7 @@ body {
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    opacity: 0.04;
+    opacity: var(--noise-opacity);
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -308,15 +354,15 @@ body {
 .terminal-window {
     width: 100%;
     max-width: 700px;
-    background: rgba(0, 255, 157, 0.02);
+    background: var(--terminal-bg);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(0, 255, 157, 0.1);
+    border: 1px solid var(--terminal-border);
     border-radius: 12px;
     overflow: hidden;
     opacity: 0;
     transform: translateY(40px);
-    box-shadow: 0 8px 32px rgba(0, 255, 157, 0.05);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .terminal-window.visible {
@@ -609,7 +655,7 @@ body {
     color: var(--text);
     text-decoration: none;
     padding: 0.8rem 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--input-border);
     border-radius: 8px;
     transition: all 0.3s var(--ease);
     position: relative;
@@ -744,12 +790,12 @@ body {
 .reconnect-box {
     margin-top: 3rem;
     padding: 2rem;
-    border: 1px solid rgba(0, 255, 157, 0.1);
+    border: 1px solid var(--terminal-border);
     border-radius: 12px;
-    background: rgba(0, 255, 157, 0.02);
+    background: var(--terminal-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 8px 32px rgba(0, 255, 157, 0.03);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
     transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
 }
 
@@ -776,8 +822,8 @@ body {
     gap: 0.5rem;
     margin: 1.5rem 0 1rem;
     padding: 0.8rem 1rem;
-    background: var(--void);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
     border-radius: 8px;
     transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
     width: 100%;
@@ -852,7 +898,7 @@ body {
     font-size: 0.9rem;
     color: var(--dim);
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid var(--input-border);
     border-radius: 6px;
     padding: 0.8rem 1.5rem;
     cursor: pointer;
@@ -906,7 +952,7 @@ body {
     color: var(--dim);
     text-decoration: none;
     padding: 0.8rem 1.5rem;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid var(--input-border);
     border-radius: 6px;
     transition: all 0.3s var(--ease);
 }
@@ -1038,7 +1084,7 @@ body {
     font-size: 0.85rem;
     color: var(--dim);
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--input-border);
     border-radius: 6px;
     cursor: pointer;
     padding: 0.6rem 1.2rem;
@@ -1060,6 +1106,85 @@ body {
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-4px); }
+}
+
+/* ================================
+   Theme Toggle
+   ================================ */
+.theme-toggle {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 9998;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--input-border);
+    border-radius: 50%;
+    background: var(--terminal-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s var(--ease);
+    color: var(--dim);
+}
+
+.theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: scale(1.05);
+}
+
+.theme-toggle svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s var(--ease);
+}
+
+.theme-toggle:hover svg {
+    transform: rotate(15deg);
+}
+
+.theme-toggle .icon-sun,
+.theme-toggle .icon-moon {
+    position: absolute;
+    transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+}
+
+/* Dark mode: show sun icon (to switch to light) */
+.theme-toggle .icon-sun {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+.theme-toggle .icon-moon {
+    opacity: 0;
+    transform: rotate(-90deg);
+}
+
+/* Light mode: show moon icon (to switch to dark) */
+[data-theme="light"] .theme-toggle .icon-sun {
+    opacity: 0;
+    transform: rotate(90deg);
+}
+
+[data-theme="light"] .theme-toggle .icon-moon {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+/* System light preference without manual override */
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .theme-toggle .icon-sun {
+        opacity: 0;
+        transform: rotate(90deg);
+    }
+    :root:not([data-theme="dark"]) .theme-toggle .icon-moon {
+        opacity: 1;
+        transform: rotate(0deg);
+    }
 }
 
 /* ================================
