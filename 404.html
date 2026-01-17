@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 | nulloxide</title>
+    <meta name="description" content="Page not found - nulloxide">
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <!-- Theme initialization -->
+    <script>
+        (function() {
+            const stored = localStorage.getItem('theme');
+            if (stored) {
+                document.documentElement.setAttribute('data-theme', stored);
+            }
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --void: #08080a;
+            --text: #e4e4e8;
+            --dim: #4a4a58;
+            --accent: #00ff9d;
+        }
+
+        [data-theme="light"] {
+            --void: #f5f5f7;
+            --text: #1a1a1c;
+            --dim: #6b6b78;
+            --accent: #00a86b;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root:not([data-theme="dark"]) {
+                --void: #f5f5f7;
+                --text: #1a1a1c;
+                --dim: #6b6b78;
+                --accent: #00a86b;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--void);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error-code {
+            font-size: clamp(4rem, 20vw, 10rem);
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 40px rgba(0, 255, 157, 0.3);
+        }
+
+        [data-theme="light"] .error-code,
+        :root:not([data-theme="dark"]) .error-code {
+            text-shadow: none;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) .error-code {
+                text-shadow: 0 0 40px rgba(0, 255, 157, 0.3);
+            }
+        }
+
+        .error-message {
+            font-size: 1.2rem;
+            color: var(--dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .error-detail {
+            font-size: 0.9rem;
+            color: var(--dim);
+            margin-bottom: 2rem;
+        }
+
+        .home-link {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .home-link:hover {
+            background: var(--accent);
+            color: var(--void);
+        }
+
+        .terminal-line {
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            color: var(--dim);
+        }
+
+        .prompt {
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-code">404</div>
+    <p class="error-message">Page not found</p>
+    <p class="error-detail">The void consumed this page. Or it never existed.</p>
+    <a href="/" class="home-link">← Return to origin</a>
+    <p class="terminal-line"><span class="prompt">$</span> cd /home</p>
+</body>
+</html>
