@@ -105,10 +105,18 @@
         <section class="section section--journey">
             <div class="terminal-window">
                 <div class="terminal-header">
-                    <span class="terminal-dot"></span>
-                    <span class="terminal-dot"></span>
-                    <span class="terminal-dot"></span>
-                    <span class="terminal-title">~/journey.sh</span>
+                    <span class="terminal-dots">
+                        <span class="terminal-dot"></span>
+                        <span class="terminal-dot"></span>
+                        <span class="terminal-dot"></span>
+                    </span>
+                    <div class="terminal-prompt-bar">
+                        <span class="prompt-segment prompt-user">nulloxide</span>
+                        <span class="prompt-segment prompt-path"> ~/journey</span>
+                        <span class="prompt-segment prompt-git"> main ✓</span>
+                        <span class="prompt-segment prompt-status">▲ deployed</span>
+                        <span class="prompt-segment prompt-env">env: prod</span>
+                    </div>
                 </div>
                 <div class="terminal-body" id="terminal">
                     <div class="terminal-line" data-delay="0">
@@ -116,6 +124,13 @@
                         <span class="cmd">LOAD "CURIOSITY",8,1</span>
                     </div>
                     <!-- More lines added by JS -->
+                </div>
+                <div class="terminal-statusbar">
+                    <span class="status-segment status-session">[0:zsh]</span>
+                    <span class="status-segment">status: operational</span>
+                    <span class="status-segment">pods: healthy</span>
+                    <span class="status-segment">uptime: <span id="status-uptime">44y</span></span>
+                    <span class="status-segment status-building">▲ building</span>
                 </div>
             </div>
         </section>

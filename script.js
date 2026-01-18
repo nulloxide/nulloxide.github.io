@@ -364,8 +364,7 @@ function initLenis() {
 function calculateAge() {
     const yearsEl = document.getElementById('years');
     const jokeEl = document.getElementById('age-joke');
-
-    if (!yearsEl || !jokeEl) return;
+    const uptimeEl = document.getElementById('status-uptime');
 
     const now = new Date();
     let years = now.getFullYear() - BIRTHDAY.getFullYear();
@@ -376,21 +375,31 @@ function calculateAge() {
 
     const msPerDay = 24 * 60 * 60 * 1000;
     const totalDays = Math.floor((now.getTime() - BIRTHDAY.getTime()) / msPerDay);
+    const daysThisYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 1).getTime()) / msPerDay);
 
-    yearsEl.textContent = String(years);
+    if (yearsEl) {
+        yearsEl.textContent = String(years);
+    }
 
-    const jokes = [
-        `That's ${totalDays.toLocaleString()} days of "it works on my machine."`,
-        `Or ${Math.floor(totalDays / 7).toLocaleString()} weeks of forgetting semicolons.`,
-        `${years} years. Still googling error messages.`,
-        `Old enough to remember floppy disks. Young enough to mass deploy.`,
-        `In hex, that's 0x${years.toString(16).toUpperCase()}. Still debugging.`,
-        `${years} in decimal. ${years.toString(2)} in binary nostalgia.`,
-        `${Math.floor(years * 365.25 * 24).toLocaleString()} hours of screen time. Give or take.`,
-    ];
+    // Update terminal status bar uptime
+    if (uptimeEl) {
+        uptimeEl.textContent = `${years}y ${daysThisYear}d`;
+    }
 
-    const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
-    jokeEl.textContent = randomJoke;
+    if (jokeEl) {
+        const jokes = [
+            `That's ${totalDays.toLocaleString()} days of "it works on my machine."`,
+            `Or ${Math.floor(totalDays / 7).toLocaleString()} weeks of forgetting semicolons.`,
+            `${years} years. Still googling error messages.`,
+            `Old enough to remember floppy disks. Young enough to mass deploy.`,
+            `In hex, that's 0x${years.toString(16).toUpperCase()}. Still debugging.`,
+            `${years} in decimal. ${years.toString(2)} in binary nostalgia.`,
+            `${Math.floor(years * 365.25 * 24).toLocaleString()} hours of screen time. Give or take.`,
+        ];
+
+        const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
+        jokeEl.textContent = randomJoke;
+    }
 }
 
 // ================================

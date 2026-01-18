@@ -374,10 +374,15 @@ body {
 .terminal-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
+    gap: 12px;
+    padding: 10px 16px;
     background: rgba(255,255,255,0.02);
     border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.terminal-dots {
+    display: flex;
+    gap: 8px;
 }
 
 .terminal-dot {
@@ -391,11 +396,86 @@ body {
 .terminal-dot:nth-child(2) { background: #ffbd2e; }
 .terminal-dot:nth-child(3) { background: #28c840; }
 
-.terminal-title {
-    margin-left: auto;
+.terminal-prompt-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
     font-family: var(--font-mono);
     font-size: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.prompt-segment {
+    padding: 2px 8px;
+    border-radius: 2px;
+}
+
+.prompt-user {
+    color: #1a1a1c;
+    background: var(--accent);
+    font-weight: 500;
+}
+
+.prompt-path {
+    color: var(--text);
+    background: rgba(255,255,255,0.1);
+}
+
+.prompt-git {
+    color: #1a1a1c;
+    background: #a6e3a1;
+}
+
+.prompt-status {
+    color: #1a1a1c;
+    background: #89b4fa;
+}
+
+.prompt-env {
+    color: #1a1a1c;
+    background: #f9e2af;
+}
+
+[data-theme="light"] .prompt-path,
+:root:not([data-theme="dark"]) .prompt-path {
+    background: rgba(0,0,0,0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .prompt-path {
+        background: rgba(255,255,255,0.1);
+    }
+}
+
+.terminal-statusbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.02);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
     color: var(--dim);
+    flex-wrap: wrap;
+}
+
+.status-segment {
+    padding: 2px 8px;
+}
+
+.status-segment:not(:last-child)::after {
+    content: "│";
+    margin-left: 8px;
+    opacity: 0.3;
+}
+
+.status-session {
+    color: var(--accent);
+}
+
+.status-building {
+    color: #89b4fa;
 }
 
 .terminal-body {
@@ -1236,6 +1316,19 @@ body {
         white-space: nowrap;
     }
 
+    .terminal-prompt-bar {
+        font-size: 0.65rem;
+    }
+
+    .prompt-segment {
+        padding: 2px 6px;
+    }
+
+    .terminal-statusbar {
+        font-size: 0.6rem;
+        padding: 6px 12px;
+    }
+
     .philosophy-grid {
         grid-template-columns: 1fr;
         gap: 3rem;
@@ -1315,11 +1408,46 @@ body {
 
     .terminal-header {
         padding: 0.5rem 0.75rem;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .terminal-prompt-bar {
+        font-size: 0.55rem;
+        width: 100%;
+        order: 1;
+    }
+
+    .terminal-dots {
+        gap: 6px;
+    }
+
+    .terminal-dot {
+        width: 10px;
+        height: 10px;
+    }
+
+    .prompt-segment {
+        padding: 1px 4px;
     }
 
     .terminal-body {
         font-size: 0.65rem;
         padding: 0.75rem;
+    }
+
+    .terminal-statusbar {
+        font-size: 0.55rem;
+        padding: 4px 8px;
+        gap: 2px;
+    }
+
+    .status-segment {
+        padding: 1px 4px;
+    }
+
+    .status-segment:not(:last-child)::after {
+        margin-left: 4px;
     }
 
     .depth-visual {
