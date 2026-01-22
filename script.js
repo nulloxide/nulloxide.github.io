@@ -107,6 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ).matches;
 
   initThemeToggle();
+  initVisitorStatus();
   initLenis();
   initKineticTypography();
   calculateAge();
@@ -127,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initRotatingPlaceholder();
   initEmailReveal();
   initEndSection();
+  initKonamiCode();
 });
 
 // ================================
@@ -380,6 +382,53 @@ function initButtonSpotlight() {
       { signal: controller.signal },
     );
   });
+}
+
+// ================================
+// Visitor Status Detection
+// ================================
+
+/**
+ * Initialize visitor status in terminal status bar
+ * Shows platform and time-based info in compact format
+ */
+function initVisitorStatus() {
+  const visitorEl = document.getElementById("status-visitor");
+  if (!visitorEl) return;
+
+  const platform = navigator.platform || "";
+  const hour = new Date().getHours();
+
+  // Combine platform + time into single short quip
+  // Format: "mac@3am" style - compact and terminal-like
+  let os = "???";
+  if (/Mac|iPhone|iPad|iPod/.test(platform)) {
+    os = "mac";
+  } else if (/Win/.test(platform)) {
+    os = "win";
+  } else if (/Linux/.test(platform)) {
+    os = "nix";
+  } else if (/Android/.test(navigator.userAgent)) {
+    os = "droid";
+  }
+
+  // Time as short label
+  let time = "";
+  if (hour >= 0 && hour < 5) {
+    time = "late";
+  } else if (hour >= 5 && hour < 8) {
+    time = "early";
+  } else if (hour >= 8 && hour < 12) {
+    time = "am";
+  } else if (hour >= 12 && hour < 17) {
+    time = "pm";
+  } else if (hour >= 17 && hour < 21) {
+    time = "eve";
+  } else {
+    time = "night";
+  }
+
+  visitorEl.textContent = `${os}@${time}`;
 }
 
 // ================================
@@ -1716,4 +1765,102 @@ function initEndSection() {
       }, 5000),
     );
   }
+}
+
+// ================================
+// Konami Code Easter Egg
+// ================================
+
+/**
+ * Initialize Konami code detection (↑↑↓↓←→←→BA)
+ */
+function initKonamiCode() {
+  const konamiSequence = [
+    "ArrowUp",
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+    "ArrowLeft",
+    "ArrowRight",
+    "KeyB",
+    "KeyA",
+  ];
+  let konamiIndex = 0;
+  let isAnimating = false;
+
+  const controller = createAbortController();
+
+  document.addEventListener(
+    "keydown",
+    (e) => {
+      if (isAnimating) return;
+
+      const key = e.code;
+
+      if (key === konamiSequence[konamiIndex]) {
+        konamiIndex++;
+
+        if (konamiIndex === konamiSequence.length) {
+          konamiIndex = 0;
+          isAnimating = true;
+          triggerKonamiEasterEgg(() => {
+            isAnimating = false;
+          });
+        }
+      } else {
+        konamiIndex = 0;
+        // Check if first key matches to start fresh
+        if (key === konamiSequence[0]) {
+          konamiIndex = 1;
+        }
+      }
+    },
+    { signal: controller.signal },
+  );
+}
+
+/**
+ * Trigger the Konami code easter egg effects
+ * @param {Function} onComplete - Callback when animation completes
+ */
+function triggerKonamiEasterEgg(onComplete) {
+  // Show secret message
+  const message = document.createElement("div");
+  message.className = "konami-message";
+  message.innerHTML = `
+    <div class="konami-message-content">
+      <span class="konami-symbol">⬆️⬆️⬇️⬇️⬅️➡️⬅️➡️🅱️🅰️</span>
+      <span class="konami-text">// YOU FOUND IT</span>
+      <span class="konami-subtext">30 extra lives unlocked. Just kidding.</span>
+      <span class="konami-subtext">But you clearly know your classics.</span>
+    </div>
+  `;
+  document.body.appendChild(message);
+
+  // Fade in message
+  requestAnimationFrame(() => {
+    message.classList.add("visible");
+  });
+
+  // Console message
+  console.log(
+    "%c🎮 KONAMI CODE ACTIVATED! 🎮",
+    "font-size: 24px; color: #00ff9d; font-weight: bold;",
+  );
+  console.log("%c↑ ↑ ↓ ↓ ← → ← → B A", "font-size: 16px; color: #cba6f7;");
+  console.log(
+    "%cYou found the easter egg. Respect.",
+    "font-size: 14px; color: #89b4fa;",
+  );
+
+  // Hide message after a bit
+  registerTimeout(() => {
+    message.classList.remove("visible");
+    registerTimeout(() => {
+      message.remove();
+      if (onComplete) onComplete();
+    }, 500);
+  }, 4000);
 }

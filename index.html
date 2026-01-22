@@ -8,10 +8,10 @@
             name="description"
             content="nulloxide - the void where everything begins + the patina from decades of exposure. Decades of building, breaking, and debugging."
         />
-        <meta name="author" content="nulloxide" />
+        <meta name="author" content="Mohsen Ramezani (nulloxide)" />
         <meta
             name="keywords"
-            content="nulloxide, developer, engineer, portfolio"
+            content="Mohsen Ramezani, nulloxide, CTO, developer, engineer, portfolio"
         />
         <meta
             name="theme-color"
@@ -65,7 +65,8 @@
             {
                 "@context": "https://schema.org",
                 "@type": "Person",
-                "name": "nulloxide",
+                "name": "Mohsen Ramezani",
+                "alternateName": "nulloxide",
                 "url": "https://nulloxide.com",
                 "image": "https://nulloxide.com/og-image.svg",
                 "description": "The void where everything begins + the patina from decades of exposure. Decades of building, breaking, and debugging.",
@@ -74,7 +75,7 @@
                     "https://twitter.com/nulloxide",
                     "https://github.com/nulloxide"
                 ],
-                "jobTitle": "Software Engineer",
+                "jobTitle": "CTO",
                 "knowsAbout": [
                     "Software Development",
                     "System Architecture",
@@ -82,6 +83,15 @@
                     "Data Engineering",
                     "DevOps"
                 ]
+            }
+        </script>
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "nulloxide",
+                "alternateName": "Mohsen Ramezani Portfolio",
+                "url": "https://nulloxide.com"
             }
         </script>
 
@@ -294,11 +304,14 @@
                         <span class="status-segment status-session"
                             >[0:zsh]</span
                         >
-                        <span class="status-segment">status: operational</span>
-                        <span class="status-segment">pods: healthy</span>
+                        <span class="status-segment">operational</span>
+                        <span class="status-segment">pods: ok</span>
                         <span class="status-segment"
                             >uptime: <span id="status-uptime">44y</span></span
                         >
+                        <span class="status-segment status-visitor"
+                            ><span id="status-visitor"></span
+                        ></span>
                         <span class="status-segment status-building"
                             >▲ building</span
                         >
@@ -352,19 +365,6 @@
                         class="comment-line"
                         data-text="// But here you are. {accent}Respect.{/accent}"
                     ></span>
-                </div>
-            </section>
-
-            <!-- Location -->
-            <section class="section section--location" aria-label="Location">
-                <div class="location-content">
-                    <p class="location-prompt">
-                        <span class="dim">$ whereis nulloxide</span>
-                    </p>
-                    <p class="location-response" aria-live="polite">
-                        <span class="cursor-blink">_</span>
-                    </p>
-                    <p class="location-coords dim" id="location-coords"></p>
                 </div>
             </section>
 
@@ -462,6 +462,19 @@
                 </div>
             </section>
 
+            <!-- Location -->
+            <section class="section section--location" aria-label="Location">
+                <div class="location-content">
+                    <p class="location-prompt">
+                        <span class="dim">$ whereis nulloxide</span>
+                    </p>
+                    <p class="location-response" aria-live="polite">
+                        <span class="cursor-blink">_</span>
+                    </p>
+                    <p class="location-coords dim" id="location-coords"></p>
+                </div>
+            </section>
+
             <!-- End -->
             <section class="section section--end">
                 <div class="end-content">
@@ -475,9 +488,7 @@
                         <p class="end-line dim">
                             // Still building. Still curious.
                         </p>
-                        <p class="end-line dim">
-                            // <span id="end-timestamp"></span>
-                        </p>
+                        <p class="end-line dim">// See you in the logs.</p>
                     </div>
                     <button
                         class="scroll-top"
