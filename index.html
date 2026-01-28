@@ -95,7 +95,7 @@
             }
         </script>
 
-        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="style.css" fetchpriority="high" />
 
         <!-- Theme initialization (inline to prevent FOUC) -->
         <script>
@@ -109,10 +109,30 @@
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <!-- Preload critical font for LCP -->
         <link
-            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@200;300;400;500&display=swap"
-            rel="stylesheet"
+            rel="preload"
+            href="https://fonts.gstatic.com/s/jetbrainsmono/v18/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPVmUsaaDhw.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
         />
+        <!-- Non-render-blocking font loading -->
+        <link
+            rel="preload"
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@200;300;400;500&display=swap"
+            as="style"
+            onload="
+                this.onload = null;
+                this.rel = 'stylesheet';
+            "
+        />
+        <noscript>
+            <link
+                href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@200;300;400;500&display=swap"
+                rel="stylesheet"
+            />
+        </noscript>
     </head>
     <body>
         <!-- No JavaScript Fallback -->
@@ -501,22 +521,25 @@
             </section>
         </main>
 
-        <!-- Libraries -->
+        <!-- Libraries (defer to not block LCP) -->
         <script
+            defer
             src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
             integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt"
             crossorigin="anonymous"
         ></script>
         <script
+            defer
             src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
             integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d"
             crossorigin="anonymous"
         ></script>
         <script
+            defer
             src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"
             integrity="sha384-tKsJDT6PlUI0pSBt9/sBKJluKgA19/a6mBrDsZaXotLB4ZYfMGM6xt6/WgGpYhTm"
             crossorigin="anonymous"
         ></script>
-        <script src="script.js"></script>
+        <script defer src="script.js"></script>
     </body>
 </html>
