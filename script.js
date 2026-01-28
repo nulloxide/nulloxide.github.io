@@ -106,29 +106,37 @@ document.addEventListener("DOMContentLoaded", () => {
     "(prefers-reduced-motion: reduce)",
   ).matches;
 
+  // Critical path - run immediately for LCP
   initThemeToggle();
   initVisitorStatus();
-  initLenis();
-  initKineticTypography();
   calculateAge();
-  initTerminalJourney();
-  initScrollProgress();
-  initScrollToTop();
 
-  if (!prefersReducedMotion) {
-    initWaveVisualization();
-    initVoidCanvas();
-  }
+  // Defer ScrollTrigger and heavy animations to avoid blocking LCP
+  // Use requestIdleCallback if available, otherwise setTimeout
+  const deferInit = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
 
-  initScrollAnimations();
-  initMagnetic();
-  initMatrixLocation();
-  initNicknameInput();
-  initButtonSpotlight();
-  initRotatingPlaceholder();
-  initEmailReveal();
-  initEndSection();
-  initKonamiCode();
+  deferInit(() => {
+    initLenis();
+    initKineticTypography();
+    initTerminalJourney();
+    initScrollProgress();
+    initScrollToTop();
+
+    if (!prefersReducedMotion) {
+      initWaveVisualization();
+      initVoidCanvas();
+    }
+
+    initScrollAnimations();
+    initMagnetic();
+    initMatrixLocation();
+    initNicknameInput();
+    initButtonSpotlight();
+    initRotatingPlaceholder();
+    initEmailReveal();
+    initEndSection();
+    initKonamiCode();
+  });
 });
 
 // ================================
