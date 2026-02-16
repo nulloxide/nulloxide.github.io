@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+        />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="black-translucent"
+        />
+        <meta name="theme-color" content="#0f0a1a" />
+        <meta
+            name="description"
+            content="Code Surfer - Ride through legacy code, collect snippets, avoid bugs"
+        />
+
+        <title>Code Surfer | nulloxide</title>
+
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500&display=swap");
+
+            :root {
+                --bg-dark: #0f0a1a;
+                --bg-light: #f0ebe3;
+                --text-dark: #e8e0f0;
+                --text-light: #1a1525;
+                --accent: #00d4aa;
+                --accent-secondary: #ff6b9d;
+                --warning: #ffaa40;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                font-family: "Space Grotesk", sans-serif;
+                touch-action: none;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+                transition: background-color 0.5s ease;
+            }
+
+            body {
+                background: var(--bg-dark);
+            }
+
+            body.light-mode {
+                background: var(--bg-light);
+            }
+
+            #game-container {
+                width: 100%;
+                height: 100%;
+                position: relative;
+            }
+
+            canvas {
+                display: block;
+            }
+
+            /* Intro Screen */
+            #intro {
+                position: fixed;
+                inset: 0;
+                background: linear-gradient(
+                    135deg,
+                    #0f0a1a 0%,
+                    #1a1030 50%,
+                    #251545 100%
+                );
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 100;
+                transition:
+                    opacity 0.8s ease,
+                    transform 0.8s ease;
+            }
+
+            body.light-mode #intro {
+                background: linear-gradient(
+                    135deg,
+                    #f0ebe3 0%,
+                    #e8e0d8 50%,
+                    #ddd5c8 100%
+                );
+            }
+
+            #intro.hidden {
+                opacity: 0;
+                transform: scale(1.05);
+                pointer-events: none;
+                display: none;
+            }
+
+            .intro-icon {
+                font-size: 4rem;
+                margin-bottom: 1rem;
+                animation: float 3s ease-in-out infinite;
+            }
+
+            @keyframes float {
+                0%,
+                100% {
+                    transform: translateY(0) rotate(-5deg);
+                }
+                50% {
+                    transform: translateY(-10px) rotate(5deg);
+                }
+            }
+
+            .intro-title {
+                font-family: "JetBrains Mono", monospace;
+                font-size: clamp(2rem, 8vw, 4rem);
+                font-weight: 700;
+                color: var(--text-dark);
+                letter-spacing: -0.02em;
+                margin-bottom: 0.5rem;
+            }
+
+            body.light-mode .intro-title {
+                color: var(--text-light);
+            }
+
+            .intro-tagline {
+                font-family: "JetBrains Mono", monospace;
+                font-size: clamp(0.8rem, 2.5vw, 1rem);
+                color: var(--accent);
+                margin-bottom: 2rem;
+                opacity: 0.8;
+            }
+
+            .intro-instructions {
+                display: flex;
+                flex-direction: column;
+                gap: 0.8rem;
+                font-size: clamp(0.75rem, 2vw, 0.9rem);
+                color: #8080a0;
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+
+            body.light-mode .intro-instructions {
+                color: #606080;
+            }
+
+            .intro-instructions span {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .intro-instructions .icon {
+                font-size: 1.2em;
+            }
+
+            .intro-instructions .good {
+                color: var(--accent);
+            }
+            .intro-instructions .bad {
+                color: var(--accent-secondary);
+            }
+
+            .intro-hint {
+                font-family: "JetBrains Mono", monospace;
+                font-size: clamp(0.8rem, 2vw, 0.9rem);
+                color: #6060a0;
+                animation: pulse 2s ease-in-out infinite;
+                cursor: pointer;
+                padding: 1rem 2rem;
+                border: 1px solid #4040602;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+
+            .intro-hint:hover {
+                background: rgba(0, 212, 170, 0.1);
+                border-color: var(--accent);
+                color: var(--accent);
+            }
+
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 0.6;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+
+            /* Theme Toggle */
+            #theme-toggle {
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                z-index: 200;
+                width: 44px;
+                height: 44px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.05);
+                cursor: pointer;
+                font-size: 1.2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            }
+
+            body.light-mode #theme-toggle {
+                border-color: rgba(0, 0, 0, 0.2);
+                background: rgba(0, 0, 0, 0.05);
+            }
+
+            #theme-toggle:hover {
+                transform: scale(1.1);
+                border-color: var(--accent);
+            }
+
+            /* Score Display */
+            #score-display {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 150;
+                font-family: "JetBrains Mono", monospace;
+                font-size: clamp(1rem, 3vw, 1.4rem);
+                color: var(--text-dark);
+                display: none;
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+
+            body.light-mode #score-display {
+                color: var(--text-light);
+            }
+
+            #score-display.visible {
+                display: flex;
+            }
+
+            .score-row {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .score-label {
+                opacity: 0.5;
+                font-size: 0.8em;
+            }
+
+            .score-value {
+                font-weight: 700;
+                color: var(--accent);
+            }
+
+            .score-value.negative {
+                color: var(--accent-secondary);
+            }
+
+            /* High Score */
+            #high-score {
+                font-size: 0.8em;
+                opacity: 0.6;
+            }
+
+            /* Combo display */
+            #combo-display {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-family: "JetBrains Mono", monospace;
+                font-size: clamp(2rem, 8vw, 4rem);
+                font-weight: 700;
+                color: var(--accent);
+                opacity: 0;
+                pointer-events: none;
+                z-index: 160;
+                text-shadow: 0 0 20px var(--accent);
+                transition: opacity 0.2s ease;
+            }
+
+            #combo-display.visible {
+                animation: comboPopup 0.5s ease-out;
+            }
+
+            @keyframes comboPopup {
+                0% {
+                    opacity: 0;
+                    transform: translate(-50%, -50%) scale(0.5);
+                }
+                50% {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1.2);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translate(-50%, -50%) scale(1);
+                }
+            }
+
+            /* Game Over */
+            #game-over {
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 10, 26, 0.95);
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 180;
+                font-family: "JetBrains Mono", monospace;
+            }
+
+            body.light-mode #game-over {
+                background: rgba(240, 235, 227, 0.95);
+            }
+
+            #game-over.visible {
+                display: flex;
+            }
+
+            .game-over-title {
+                font-size: clamp(1.5rem, 5vw, 2.5rem);
+                color: var(--accent-secondary);
+                margin-bottom: 1rem;
+            }
+
+            .game-over-score {
+                font-size: clamp(2rem, 8vw, 4rem);
+                font-weight: 700;
+                color: var(--text-dark);
+                margin-bottom: 0.5rem;
+            }
+
+            body.light-mode .game-over-score {
+                color: var(--text-light);
+            }
+
+            .game-over-best {
+                font-size: 1rem;
+                color: var(--accent);
+                margin-bottom: 2rem;
+            }
+
+            .restart-btn {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 1rem;
+                padding: 1rem 2rem;
+                background: var(--accent);
+                color: #0f0a1a;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .restart-btn:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(0, 212, 170, 0.4);
+            }
+
+            /* Paper texture */
+            #paper-overlay {
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                z-index: 50;
+                opacity: 0.015;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+                mix-blend-mode: overlay;
+            }
+
+            /* Safe areas */
+            @supports (padding: env(safe-area-inset-top)) {
+                #score-display {
+                    top: calc(1rem + env(safe-area-inset-top));
+                    left: calc(1rem + env(safe-area-inset-left));
+                }
+                #theme-toggle {
+                    top: calc(1rem + env(safe-area-inset-top));
+                    right: calc(1rem + env(safe-area-inset-right));
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+
+        <div id="intro">
+            <div class="intro-icon">🏂</div>
+            <h1 class="intro-title">Code Surfer</h1>
+            <p class="intro-tagline">// ride the legacy codebase</p>
+
+            <div class="intro-instructions">
+                <span
+                    ><span class="icon good">✓</span> Unit Tests, Code Review:
+                    +15-25</span
+                >
+                <span
+                    ><span class="icon good">✨</span> Clean Code, SOLID, DRY:
+                    +12-25</span
+                >
+                <span
+                    ><span class="icon good">🚀</span> CI/CD, Refactor, Docs:
+                    +18-22</span
+                >
+                <span
+                    ><span class="icon bad">🍝</span> Avoid Spaghetti Code:
+                    -20</span
+                >
+                <span
+                    ><span class="icon bad">👑</span> Dodge God Objects:
+                    -30</span
+                >
+                <span
+                    ><span class="icon bad">🔥</span> Skip Callback Hell:
+                    -25</span
+                >
+            </div>
+
+            <div class="intro-hint">[ press anywhere to compile ]</div>
+        </div>
+
+        <div id="score-display">
+            <div class="score-row">
+                <span class="score-label">SCORE</span>
+                <span class="score-value" id="score">0</span>
+            </div>
+            <div id="high-score">BEST: <span id="best-score">0</span></div>
+        </div>
+
+        <div id="combo-display"></div>
+
+        <div id="game-over">
+            <div class="game-over-title">// runtime error</div>
+            <div class="game-over-score" id="final-score">0</div>
+            <div class="game-over-best">
+                High Score: <span id="final-best">0</span>
+            </div>
+            <button class="restart-btn">git reset --hard</button>
+        </div>
+
+        <div id="game-container"></div>
+        <div id="paper-overlay"></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+        <script src="game.js"></script>
+    </body>
+</html>
