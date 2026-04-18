@@ -163,15 +163,29 @@ function initThemeToggle() {
   }
 
   /**
+   * Sync aria-pressed with current theme (pressed = light)
+   */
+  function syncAriaPressed() {
+    toggle.setAttribute(
+      "aria-pressed",
+      getCurrentTheme() === "light" ? "true" : "false",
+    );
+  }
+
+  /**
    * Set the theme and persist to localStorage
    * @param {'light' | 'dark'} theme - The theme to set
    */
   function setTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
+    syncAriaPressed();
     // Update cached CSS values after theme change
     requestAnimationFrame(updateThemeCache);
   }
+
+  // Initial sync (theme may already be set by the head-inline FOUC-prevention script)
+  syncAriaPressed();
 
   // Toggle on click
   toggle.addEventListener(
@@ -188,11 +202,12 @@ function initThemeToggle() {
   const mediaQuery = window.matchMedia("(prefers-color-scheme: light)");
   mediaQuery.addEventListener(
     "change",
-    (e) => {
+    () => {
       // Only update if user hasn't set a manual preference
       const stored = localStorage.getItem("theme");
       if (!stored) {
         document.documentElement.removeAttribute("data-theme");
+        syncAriaPressed();
         requestAnimationFrame(updateThemeCache);
       }
     },
@@ -653,6 +668,9 @@ function initWaveVisualization() {
   const canvas = document.getElementById("wave");
   if (!canvas || !(canvas instanceof HTMLCanvasElement)) return;
 
+  // Skip on small viewports — wave canvas is decorative and costs layout/paint on mobile
+  if (window.innerWidth < 768) return;
+
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
@@ -769,6 +787,22 @@ function initWaveVisualization() {
       }
     },
     once: true,
+  });
+
+  // Pause RAF when tab is hidden to avoid unbounded memory growth in background tabs
+  const onVisibility = () => {
+    if (!animationStarted) return;
+    if (document.hidden) {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+    } else if (!animationId) {
+      draw();
+    }
+  };
+  document.addEventListener("visibilitychange", onVisibility, {
+    signal: controller.signal,
   });
 
   // Cleanup on abort
@@ -1016,6 +1050,21 @@ function initVoidCanvas() {
   );
 
   window.addEventListener("resize", resize, { signal: controller.signal });
+
+  // Pause RAF when tab is hidden to avoid unbounded memory growth in background tabs
+  const onVisibility = () => {
+    if (document.hidden) {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+    } else if (!animationId) {
+      animate();
+    }
+  };
+  document.addEventListener("visibilitychange", onVisibility, {
+    signal: controller.signal,
+  });
 
   // Cleanup on abort
   controller.signal.addEventListener("abort", () => {

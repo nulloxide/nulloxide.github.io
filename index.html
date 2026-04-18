@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="color-scheme" content="light dark" />
         <title>nulloxide</title>
         <meta
             name="description"
@@ -109,10 +110,17 @@
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <!-- Preload critical font for LCP -->
+        <!-- Preload critical fonts for LCP -->
         <link
             rel="preload"
             href="https://fonts.gstatic.com/s/jetbrainsmono/v18/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPVmUsaaDhw.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIq15j8eUY.woff2"
             as="font"
             type="font/woff2"
             crossorigin
@@ -212,6 +220,8 @@
             class="theme-toggle"
             id="theme-toggle"
             aria-label="Toggle light/dark theme"
+            aria-pressed="false"
+            type="button"
         >
             <svg
                 class="icon-sun"
@@ -260,6 +270,7 @@
 
         <!-- Main -->
         <main id="content">
+            <h1 class="sr-only">nulloxide — Mohsen Ramezani, CTO and Engineer</h1>
             <!-- Intro: nulloxide meaning -->
             <section class="section section--hero">
                 <div class="hero-block">
