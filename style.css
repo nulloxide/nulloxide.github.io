@@ -400,6 +400,13 @@ body {
     /* LCP optimization: visible immediately */
 }
 
+.hero-name {
+    display: block;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-weight: 300;
+    margin-bottom: 0.6rem;
+}
+
 .age-line {
     font-size: clamp(1.2rem, 3vw, 1.8rem);
     font-weight: 300;
@@ -1258,6 +1265,14 @@ body {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     animation: holographicShimmer 8s ease infinite;
+}
+
+.sig-realname {
+    font-size: 0.85rem;
+    font-weight: 300;
+    letter-spacing: 0.03em;
+    margin-left: 0.75rem;
+    font-family: var(--font-mono);
 }
 
 .sig-name {
